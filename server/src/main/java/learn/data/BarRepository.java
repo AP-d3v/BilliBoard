@@ -1,4 +1,4 @@
 package learn.data;
 
-public class BarRepository {
+public interface BarRepository {
 }

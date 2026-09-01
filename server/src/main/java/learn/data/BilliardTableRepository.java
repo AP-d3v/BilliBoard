@@ -1,4 +1,4 @@
 package learn.data;
 
-public class BilliardTableRepository {
+public interface BilliardTableRepository {
 }

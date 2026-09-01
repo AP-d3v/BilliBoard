@@ -1,4 +1,8 @@
 package learn.data;
 
-public class BarOwnerRepository {
+import learn.models.BarOwner;
+
+public interface BarOwnerRepository {
+
+    BarOwner findByEmail(String email);
 }
