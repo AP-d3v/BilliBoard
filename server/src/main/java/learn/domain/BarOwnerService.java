@@ -13,8 +13,24 @@ private final BarOwnerRepository barOwnerRepository;
         this.barOwnerRepository = barOwnerRepository;
     }
 
-    public BarOwner authenticate (BarOwner proposedLoginCreds){
-        return null;
+    public Result<BarOwner> authenticate (BarOwner proposedLoginCreds){
+        Result<BarOwner> result = new Result<>();
+        BarOwner fromDb = barOwnerRepository.findByEmail(proposedLoginCreds.getEmail());
+
+        if(fromDb == null){
+            result.setType(ResultType.INVALID);
+            result.addErrorMessage("Invalid email and/or password");
+            return result;
+        }
+
+        if(!(fromDb.getPassword().equalsIgnoreCase(proposedLoginCreds.getPassword()))){
+            result.setType(ResultType.INVALID);
+            result.addErrorMessage("Invalid email and/or password");
+            return result;
+        }
+
+        result.setPayload(fromDb);
+        return result;
     }
 
 

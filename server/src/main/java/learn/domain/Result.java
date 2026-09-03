@@ -32,6 +32,10 @@ public class Result<T> {
         return type;
     }
 
+    public void setType(ResultType type) {
+        this.type = type;
+    }
+
     public T getPayload() {
         return payload;
     }
