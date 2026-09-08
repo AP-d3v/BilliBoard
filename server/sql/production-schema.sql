@@ -35,7 +35,7 @@ CREATE TABLE reservation (
     reservation_id INT AUTO_INCREMENT PRIMARY KEY,
     player_name    VARCHAR(250) NOT NULL,
     patron_email   VARCHAR(250) NOT NULL,
-    session_id     INT NOT NULL,
+    session_id     VARCHAR(50) NOT NULL,
     table_id       INT NOT NULL,
     CONSTRAINT fk_reservation_billiard_table
         FOREIGN KEY (table_id) REFERENCES billiard_table (table_id)

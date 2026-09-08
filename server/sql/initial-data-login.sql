@@ -14,4 +14,8 @@ INSERT INTO billiard_table (max_players, closing_time, bar_id) VALUES
     (2, '01:00:00', 1),
     (4, '00:00:00', 2);
 
+INSERT INTO reservation (player_name, patron_email, session_id, table_id) VALUES
+    ('Ada', 'ada@example.com', 'seed-session-ada', 1),
+    ('Grace', 'grace@example.com', 'seed-session-grace', 1);
+
 

@@ -1,0 +1,32 @@
+### Patron endpoints
+
+### The line for table 1
+GET http://localhost:8080/tables/1/reservations
+
+### Join the line for table 1
+POST http://localhost:8080/tables/1/reservations
+Content-Type: application/json
+
+{
+  "playerName": "Sam",
+  "patronEmail": "sam@example.com"
+}
+
+### Join again with the same email = 400 "already in line"
+POST http://localhost:8080/tables/1/reservations
+Content-Type: application/json
+
+{
+  "playerName": "Sam",
+  "patronEmail": "sam@example.com"
+}
+
+### Join a table that doesn't exist = 404
+POST http://localhost:8080/tables/999/reservations
+Content-Type: application/json
+
+{
+  "playerName": "Sam",
+  "patronEmail": "sam@example.com"
+}
+
