@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+/* tailwind theme vairables */
+@theme {
+  --color-felt: #1f4a37;
+  --color-felt-dark: #143329;
+  --color-rail: #3a2718;
+  --color-rail-light: #5c4632;
+  --color-cream: #f2ecdb;
+  --color-gold: #cb9a45;
+  --color-pocket: #0c0c0c;
+
+  --font-display: "Anton", system-ui, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, monospace;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--color-felt-dark);
+  color: var(--color-cream);
+}

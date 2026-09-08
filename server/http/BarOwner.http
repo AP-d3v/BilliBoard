@@ -1,0 +1,63 @@
+### Login: happy path
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "email": "aprescott@dev10.com",
+  "password": "abc123"
+}
+
+> {%
+    client.global.set("authToken", response.body.diyJwt);
+%}
+
+### Login: wrong password
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "email": "aprescott@dev10.com",
+  "password": "nope"
+}
+
+### Login: unknown email
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "email": "ghost@dev10.com",
+  "password": "abc123"
+}
+
+### Sign up: happy path
+POST http://localhost:8080/register
+Content-Type: application/json
+
+{
+  "email": "newowner@dev10.com",
+  "firstname": "New",
+  "lastName": "Owner",
+  "password": "secret123"
+}
+
+### Sign up: short password
+POST http://localhost:8080/register
+Content-Type: application/json
+
+{
+  "email": "x@dev10.com",
+  "firstname": "X",
+  "lastName": "Y",
+  "password": "123"
+}
+
+### Am I who i say I am
+GET http://localhost:8080/me
+Authorization: {{authToken}}
+
+### I'm not who i say I am
+GET http://localhost:8080/me
+Authorization: {"barOwnerId":999,"email":"aprescott@dev10.com","firstname":"Alasco","lastName":"Prescott"}|123456
+
+### Invalid way to claim who I am
+GET http://localhost:8080/me

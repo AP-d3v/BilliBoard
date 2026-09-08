@@ -1,0 +1,41 @@
+### Run "Login: happy path"
+
+### My bars
+GET http://localhost:8080/bars
+Authorization: {{authToken}}
+
+### One bar
+GET http://localhost:8080/bars/1
+Authorization: {{authToken}}
+
+### One bar's tables
+GET http://localhost:8080/bars/1/tables
+Authorization: {{authToken}}
+
+### Add a bar
+POST http://localhost:8080/bars
+Content-Type: application/json
+Authorization: {{authToken}}
+
+{
+  "barName": "New Spot",
+  "address": "9 Rack Rd"
+}
+
+### Update a bar
+PUT http://localhost:8080/bars/1
+Content-Type: application/json
+Authorization: {{authToken}}
+
+{
+  "barName": "Carmelos (renamed)",
+  "address": "1234 Main St"
+}
+
+### Delete a bar
+DELETE http://localhost:8080/bars/1
+Authorization: {{authToken}}
+
+### Bar id that isn't yours  403 / 404
+GET http://localhost:8080/bars/999/tables
+Authorization: {{authToken}}

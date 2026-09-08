@@ -1,8 +1,8 @@
 
 
-DROP DATABASE IF EXISTS billiboard;
-CREATE DATABASE billiboard;
-USE billiboard;
+DROP DATABASE IF EXISTS billiboard_test;
+CREATE DATABASE billiboard_test;
+USE billiboard_test;
 
 
 CREATE TABLE bar_owner (
@@ -48,3 +48,35 @@ CREATE TABLE notification (
     CONSTRAINT fk_notification_reservation
         FOREIGN KEY (reservation_id) REFERENCES reservation (reservation_id)
 );
+
+
+DELIMITER //
+CREATE PROCEDURE set_known_good_state()
+BEGIN
+    
+    DELETE FROM notification;
+    DELETE FROM reservation;
+    DELETE FROM billiard_table;
+    DELETE FROM bar;
+    DELETE FROM bar_owner;
+    ALTER TABLE notification    AUTO_INCREMENT = 1;
+    ALTER TABLE reservation     AUTO_INCREMENT = 1;
+    ALTER TABLE billiard_table  AUTO_INCREMENT = 1;
+    ALTER TABLE bar             AUTO_INCREMENT = 1;
+    ALTER TABLE bar_owner       AUTO_INCREMENT = 1;
+
+    INSERT INTO bar_owner (email, first_name, last_name, password)
+    VALUES ('aprescott@dev10.com', 'Alasco', 'Prescott', '-1424436561');
+
+
+    INSERT INTO bar (bar_name, address, bar_owner_id) VALUES
+        ('Carmelos', '1234 Main St', 1),
+        ('Paddy''s Pub', '123 5th Ave', 1);
+
+
+    INSERT INTO billiard_table (max_players, closing_time, bar_id) VALUES
+        (4, '23:00:00', 1),
+        (2, '01:00:00', 1),
+        (4, '00:00:00', 2);
+END//
+DELIMITER ;
