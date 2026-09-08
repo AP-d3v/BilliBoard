@@ -39,3 +39,37 @@ Authorization: {{authToken}}
 ### Bar id that isn't yours  403 / 404
 GET http://localhost:8080/bars/999/tables
 Authorization: {{authToken}}
+
+### Add a table to bar 1
+POST http://localhost:8080/bars/1/tables
+Content-Type: application/json
+Authorization: {{authToken}}
+
+{
+  "maxPlayers": 4,
+  "closingTime": "23:30"
+}
+
+### Update table 1 at bar 1
+PUT http://localhost:8080/bars/1/tables/1
+Content-Type: application/json
+Authorization: {{authToken}}
+
+{
+  "maxPlayers": 6,
+  "closingTime": "22:00"
+}
+
+### Delete table 1 at bar 1
+DELETE http://localhost:8080/bars/1/tables/1
+Authorization: {{authToken}}
+
+### Table that isn't at this bar  404
+PUT http://localhost:8080/bars/1/tables/3
+Content-Type: application/json
+Authorization: {{authToken}}
+
+{
+  "maxPlayers": 6,
+  "closingTime": "22:00"
+}
