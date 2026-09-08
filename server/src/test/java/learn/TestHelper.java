@@ -3,6 +3,7 @@ package learn;
 import learn.models.Bar;
 import learn.models.BarOwner;
 import learn.models.BilliardTable;
+import learn.models.Reservation;
 
 import java.time.LocalTime;
 
@@ -19,4 +20,8 @@ public class TestHelper {
     public static Bar bar2 = new Bar(2, "Paddy's Pub", "123 5th Ave", 1);
 
     public static BilliardTable table1 = new BilliardTable(1, 4, LocalTime.of(23, 0), 1);
+
+    // first in line
+    public static Reservation reservation1 =
+            new Reservation(1, "Ada", "ada@example.com", "seed-session-ada", 1);
 }

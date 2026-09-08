@@ -35,7 +35,7 @@ CREATE TABLE reservation (
     reservation_id INT AUTO_INCREMENT PRIMARY KEY,
     player_name    VARCHAR(250) NOT NULL,
     patron_email   VARCHAR(250) NOT NULL,
-    session_id     INT NOT NULL,
+    session_id     VARCHAR(50) NOT NULL,
     table_id       INT NOT NULL,
     CONSTRAINT fk_reservation_billiard_table
         FOREIGN KEY (table_id) REFERENCES billiard_table (table_id)
@@ -78,5 +78,10 @@ BEGIN
         (4, '23:00:00', 1),
         (2, '01:00:00', 1),
         (4, '00:00:00', 2);
+
+    -- two patrons already in line for table 1 (session ids are fake, real ones are UUIDs)
+    INSERT INTO reservation (player_name, patron_email, session_id, table_id) VALUES
+        ('Ada', 'ada@example.com', 'seed-session-ada', 1),
+        ('Grace', 'grace@example.com', 'seed-session-grace', 1);
 END//
 DELIMITER ;

@@ -6,6 +6,7 @@ import learn.domain.Result;
 import learn.domain.ResultType;
 import learn.models.Bar;
 import learn.models.BarOwner;
+import learn.models.BilliardTable;
 import learn.security.AuthResult;
 import learn.security.AuthorizationHelper;
 import org.springframework.http.HttpStatus;
@@ -67,6 +68,76 @@ public class BarController {
             return ownershipProblem;
         }
         return ResponseEntity.ok(billiardTableService.findByBarId(barId));
+    }
+
+    @PostMapping("/{barId}/tables")
+    public ResponseEntity<Object> addTable(@PathVariable int barId, @RequestBody BilliardTable table,
+                                           @RequestHeader Map<String, String> headers) {
+        AuthResult auth = authorizationHelper.getBarOwnerFromHeaders(headers);
+        if (!auth.isSuccess()) {
+            return auth.getResponseEntity();
+        }
+        ResponseEntity<Object> ownershipProblem = checkOwnership(barId, auth.getBarOwner());
+        if (ownershipProblem != null) {
+            return ownershipProblem;
+        }
+        table.setTableId(0);
+        table.setBarId(barId);
+
+        Result<BilliardTable> result = billiardTableService.add(table);
+        if (!result.isSuccess()) {
+            return new ResponseEntity<>(result.getErrorMessages(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(result.getPayload(), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{barId}/tables/{tableId}")
+    public ResponseEntity<Object> updateTable(@PathVariable int barId, @PathVariable int tableId,
+                                              @RequestBody BilliardTable table,
+                                              @RequestHeader Map<String, String> headers) {
+        AuthResult auth = authorizationHelper.getBarOwnerFromHeaders(headers);
+        if (!auth.isSuccess()) {
+            return auth.getResponseEntity();
+        }
+        ResponseEntity<Object> ownershipProblem = checkOwnership(barId, auth.getBarOwner());
+        if (ownershipProblem != null) {
+            return ownershipProblem;
+        }
+        //method to ensure table belongs to bar
+        ResponseEntity<Object> tableProblem = checkTableAtBar(barId, tableId);
+        if (tableProblem != null) {
+            return tableProblem;
+        }
+        table.setTableId(tableId);
+        table.setBarId(barId);
+
+        Result<BilliardTable> result = billiardTableService.update(table);
+        if (!result.isSuccess()) {
+            HttpStatus status = result.getType() == ResultType.NOT_FOUND
+                    ? HttpStatus.NOT_FOUND
+                    : HttpStatus.BAD_REQUEST;
+            return new ResponseEntity<>(result.getErrorMessages(), status);
+        }
+        return ResponseEntity.ok(result.getPayload());
+    }
+
+    @DeleteMapping("/{barId}/tables/{tableId}")
+    public ResponseEntity<Object> deleteTable(@PathVariable int barId, @PathVariable int tableId,
+                                              @RequestHeader Map<String, String> headers) {
+        AuthResult auth = authorizationHelper.getBarOwnerFromHeaders(headers);
+        if (!auth.isSuccess()) {
+            return auth.getResponseEntity();
+        }
+        ResponseEntity<Object> ownershipProblem = checkOwnership(barId, auth.getBarOwner());
+        if (ownershipProblem != null) {
+            return ownershipProblem;
+        }
+        ResponseEntity<Object> tableProblem = checkTableAtBar(barId, tableId);
+        if (tableProblem != null) {
+            return tableProblem;
+        }
+        billiardTableService.deleteById(tableId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping
@@ -136,6 +207,15 @@ public class BarController {
         }
         if (existing.getBarOwnerId() != owner.getBarOwnerId()) {
             return new ResponseEntity<>(List.of("That bar belongs to someone else."), HttpStatus.FORBIDDEN);
+        }
+        return null;
+    }
+
+    // makes sure the table belongs to the bar
+    private ResponseEntity<Object> checkTableAtBar(int barId, int tableId) {
+        BilliardTable existing = billiardTableService.findById(tableId);
+        if (existing == null || existing.getBarId() != barId) {
+            return new ResponseEntity<>(List.of("Table not found at this bar."), HttpStatus.NOT_FOUND);
         }
         return null;
     }

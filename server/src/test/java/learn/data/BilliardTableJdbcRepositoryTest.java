@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.simple.JdbcClient;
 
+import java.time.LocalTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,5 +39,41 @@ class BilliardTableJdbcRepositoryTest {
     @Test
     void shouldReturnEmptyForBarWithNoTables() {
         assertTrue(repo.findByBarId(999).isEmpty());
+    }
+
+    @Test
+    void shouldFindById() {
+        assertEquals(TestHelper.table1, repo.findById(1));
+        assertNull(repo.findById(999));
+    }
+
+    @Test
+    void shouldAdd() {
+        BilliardTable toAdd = new BilliardTable(0, 8, LocalTime.of(2, 0), 1);
+
+        BilliardTable added = repo.add(toAdd);
+
+        assertNotNull(added);
+        assertTrue(added.getTableId() > 3);
+        assertEquals(added, repo.findById(added.getTableId()));
+    }
+
+    @Test
+    void shouldUpdate() {
+        BilliardTable table = new BilliardTable(1, 6, LocalTime.of(22, 30), 1);
+        assertTrue(repo.update(table));
+        assertEquals(table, repo.findById(1));
+    }
+
+    @Test
+    void shouldNotUpdateMissing() {
+        assertFalse(repo.update(new BilliardTable(999, 4, LocalTime.of(23, 0), 1)));
+    }
+
+    @Test
+    void shouldDeleteById() {
+        assertTrue(repo.deleteById(3));
+        assertNull(repo.findById(3));
+        assertFalse(repo.deleteById(3));
     }
 }
