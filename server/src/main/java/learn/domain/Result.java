@@ -24,6 +24,12 @@ public class Result<T> {
         this.type = ResultType.INVALID;
     }
 
+
+    public void addErrorMessage(String message, ResultType type) {
+        messages.add(message);
+        this.type = type;
+    }
+
     public void setNotFound() {
         this.type = ResultType.NOT_FOUND;
     }
@@ -44,5 +50,5 @@ public class Result<T> {
         this.payload = payload;
     }
 
-    // snip
+
 }

@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.simple.JdbcClient;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 class BarOwnerJdbcRepositoryTest {
 
@@ -19,26 +20,33 @@ class BarOwnerJdbcRepositoryTest {
     BarOwnerRepository repo;
 
     @BeforeEach
-    void setup(){
+    void setup() {
         jdbcClient.sql("call set_known_good_state();").update();
     }
 
     @Test
     void shouldFindByEmail() {
-        //arrange
         BarOwner expected = TestHelper.barOwner1;
-        //act
         BarOwner actual = repo.findByEmail("aprescott@dev10.com");
 
-        //assert
         assertEquals(expected, actual);
-        assertTrue(actual.getEmail().equals("aprescott@dev10.com"));
+        assertEquals("aprescott@dev10.com", actual.getEmail());
     }
 
     @Test
-    void shouldNotFindByEmail(){
-        BarOwner expected = TestHelper.barOwner1;
-        BarOwner actual = repo.findByEmail("fakeemail@gmail.com");
-        assertNull(actual);
+    void shouldNotFindByEmail() {
+        assertNull(repo.findByEmail("fakeemail@gmail.com"));
+    }
+
+
+    @Test
+    void shouldAdd() {
+        BarOwner toAdd = new BarOwner(0, "second@dev10.com", "Second", "Owner", "someHashString");
+
+        BarOwner added = repo.add(toAdd);
+
+        assertNotNull(added);
+        assertTrue(added.getBarOwnerId() > 1);
+        assertEquals(added, repo.findByEmail("second@dev10.com"));
     }
 }
