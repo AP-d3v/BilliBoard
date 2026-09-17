@@ -3,6 +3,7 @@ version: 0.2
 phases:
   pre_build:
     commands:
+      - cd server
       - mvn clean install
       - echo Logging in to Amazon ECR...
       - aws --version
@@ -32,4 +33,4 @@ phases:
 artifacts:
   files:
     - imagedefinitions.json
-    - target/billiboard-1.0-SNAPSHOT.jar
+    - server/target/billiboard-1.0-SNAPSHOT.jar
