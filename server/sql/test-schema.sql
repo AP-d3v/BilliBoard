@@ -37,16 +37,12 @@ CREATE TABLE reservation (
     patron_email   VARCHAR(250) NOT NULL,
     session_id     VARCHAR(50) NOT NULL,
     table_id       INT NOT NULL,
+    status               VARCHAR(20) NOT NULL DEFAULT 'WAITING',
+    confirm_requested_at DATETIME NULL,
+    nudged_by_session    VARCHAR(50) NULL,
+    onesignal_subscription_id VARCHAR(250) NULL,
     CONSTRAINT fk_reservation_billiard_table
         FOREIGN KEY (table_id) REFERENCES billiard_table (table_id)
-);
-
-CREATE TABLE notification (
-    notification_id           INT AUTO_INCREMENT PRIMARY KEY,
-    reservation_id            INT NOT NULL,
-    onesignal_subscription_id VARCHAR(250) NOT NULL,
-    CONSTRAINT fk_notification_reservation
-        FOREIGN KEY (reservation_id) REFERENCES reservation (reservation_id)
 );
 
 
@@ -54,12 +50,10 @@ DELIMITER //
 CREATE PROCEDURE set_known_good_state()
 BEGIN
     
-    DELETE FROM notification;
     DELETE FROM reservation;
     DELETE FROM billiard_table;
     DELETE FROM bar;
     DELETE FROM bar_owner;
-    ALTER TABLE notification    AUTO_INCREMENT = 1;
     ALTER TABLE reservation     AUTO_INCREMENT = 1;
     ALTER TABLE billiard_table  AUTO_INCREMENT = 1;
     ALTER TABLE bar             AUTO_INCREMENT = 1;
@@ -79,9 +73,8 @@ BEGIN
         (2, '01:00:00', 1),
         (4, '00:00:00', 2);
 
-    -- two patrons already in line for table 1 (session ids are fake, real ones are UUIDs)
-    INSERT INTO reservation (player_name, patron_email, session_id, table_id) VALUES
-        ('Ada', 'ada@example.com', 'seed-session-ada', 1),
-        ('Grace', 'grace@example.com', 'seed-session-grace', 1);
+    INSERT INTO reservation (player_name, patron_email, session_id, table_id, status) VALUES
+        ('Ada', 'ada@example.com', 'seed-session-ada', 1, 'PLAYING'),
+        ('Grace', 'grace@example.com', 'seed-session-grace', 1, 'WAITING');
 END//
 DELIMITER ;

@@ -37,14 +37,10 @@ CREATE TABLE reservation (
     patron_email   VARCHAR(250) NOT NULL,
     session_id     VARCHAR(50) NOT NULL,
     table_id       INT NOT NULL,
+    status               VARCHAR(20) NOT NULL DEFAULT 'WAITING',
+    confirm_requested_at DATETIME NULL,
+    nudged_by_session    VARCHAR(50) NULL,
+    onesignal_subscription_id VARCHAR(250) NULL,
     CONSTRAINT fk_reservation_billiard_table
         FOREIGN KEY (table_id) REFERENCES billiard_table (table_id)
-);
-
-CREATE TABLE notification (
-    notification_id           INT AUTO_INCREMENT PRIMARY KEY,
-    reservation_id            INT NOT NULL,
-    onesignal_subscription_id VARCHAR(250) NOT NULL,
-    CONSTRAINT fk_notification_reservation
-        FOREIGN KEY (reservation_id) REFERENCES reservation (reservation_id)
 );

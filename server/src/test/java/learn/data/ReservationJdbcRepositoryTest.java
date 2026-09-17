@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.simple.JdbcClient;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,11 +28,11 @@ class ReservationJdbcRepositoryTest {
     }
 
     @Test
-    void shouldFindLineForTableInOrder() {
-        List<Reservation> line = repo.findByTableId(1);
-        assertEquals(2, line.size());
-        assertEquals(TestHelper.reservation1, line.get(0));
-        assertEquals("Grace", line.get(1).getPlayerName());
+    void shouldFindEveryReservationForATableInOrder() {
+        List<Reservation> all = repo.findByTableId(1);
+        assertEquals(2, all.size());
+        assertEquals(TestHelper.reservation1, all.get(0));
+        assertEquals("Grace", all.get(1).getPlayerName());
     }
 
     @Test
@@ -40,36 +41,64 @@ class ReservationJdbcRepositoryTest {
     }
 
     @Test
-    void shouldFindBySessionInThatTablesLine() {
-        assertNotNull(repo.findByTableIdAndSessionId(1, "seed-session-ada"));
+    void shouldFindThePlayingPlayer() {
+        assertEquals("Ada", repo.findPlayingByTableId(1).getPlayerName());
+        assertNull(repo.findPlayingByTableId(2));
     }
 
     @Test
-    void shouldNotFindWhenSessionIsInADifferentTablesLine() {
-        // Ada's session is in table 1, not table 2
+    void shouldFindBySession() {
+        assertNotNull(repo.findByTableIdAndSessionId(1, "seed-session-ada"));
         assertNull(repo.findByTableIdAndSessionId(2, "seed-session-ada"));
     }
 
     @Test
-    void shouldNotFindUnknownSession() {
-        assertNull(repo.findByTableIdAndSessionId(1, "nope"));
+    void shouldAddAsWaiting() {
+        Reservation toAdd = new Reservation(0, "Sam", "sam@example.com", "session-sam", 1);
+        toAdd.setOnesignalSubscriptionId("sub-sam");
+        Reservation added = repo.add(toAdd);
+        assertNotNull(added);
+        assertTrue(added.getReservationId() > 2);
+
+        Reservation found = repo.findByTableIdAndSessionId(1, "session-sam");
+        assertEquals("WAITING", found.getStatus());
+        assertEquals("sub-sam", found.getOnesignalSubscriptionId());
+    }
+
+
+    @Test
+    void shouldSetAndClearConfirmWindow() {
+        assertTrue(repo.setConfirmWindow(1, LocalDateTime.now(), "seed-session-grace"));
+        Reservation ada = repo.findByTableIdAndSessionId(1, "seed-session-ada");
+        assertNotNull(ada.getConfirmRequestedAt());
+        assertEquals("seed-session-grace", ada.getNudgedBySession());
+
+        assertTrue(repo.clearConfirmWindow(1));
+        ada = repo.findByTableIdAndSessionId(1, "seed-session-ada");
+        assertNull(ada.getConfirmRequestedAt());
+        assertNull(ada.getNudgedBySession());
     }
 
     @Test
-    void shouldAdd() {
-        Reservation toAdd = new Reservation(0, "Sam", "sam@example.com", "session-sam", 1);
+    void shouldFindExpiredConfirms() {
+        assertTrue(repo.findExpiredConfirms(LocalDateTime.now()).isEmpty());
 
-        Reservation added = repo.add(toAdd);
+        repo.setConfirmWindow(1, LocalDateTime.now().minusMinutes(5), "seed-session-grace");
+        List<Reservation> expired = repo.findExpiredConfirms(LocalDateTime.now().minusMinutes(2));
+        assertEquals(1, expired.size());
+        assertEquals("Ada", expired.get(0).getPlayerName());
+    }
 
-        assertNotNull(added);
-        assertTrue(added.getReservationId() > 2);
-        assertEquals(3, repo.findByTableId(1).size());
+    @Test
+    void shouldDeleteById() {
+        assertTrue(repo.deleteById(2));
+        assertEquals(1, repo.findByTableId(1).size());
+        assertFalse(repo.deleteById(2));
     }
 
     @Test
     void shouldDeleteByTableAndSession() {
         assertTrue(repo.deleteByTableIdAndSessionId(1, "seed-session-ada"));
         assertEquals(1, repo.findByTableId(1).size());
-        assertFalse(repo.deleteByTableIdAndSessionId(1, "seed-session-ada"));
     }
 }

@@ -10,6 +10,18 @@
       href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
+
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || []
+      OneSignalDeferred.push(async function (OneSignal) {
+        await OneSignal.init({
+          appId: 'cd2d3759-3204-4776-a116-2c8fc9900d14',
+          allowLocalhostAsSecureOrigin: true,
+        })
+        await OneSignal.setConsentGiven(true)
+      })
+    </script>
   </head>
   <body>
     <div id="root"></div>

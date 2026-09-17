@@ -1,5 +1,6 @@
 package learn.models;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Reservation {
@@ -9,6 +10,10 @@ public class Reservation {
     private String patronEmail;
     private String sessionId;
     private int tableId;
+    private String status;
+    private LocalDateTime confirmRequestedAt;
+    private String nudgedBySession;
+    private String onesignalSubscriptionId;
 
     public Reservation() {
     }
@@ -59,6 +64,38 @@ public class Reservation {
 
     public void setTableId(int tableId) {
         this.tableId = tableId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getConfirmRequestedAt() {
+        return confirmRequestedAt;
+    }
+
+    public void setConfirmRequestedAt(LocalDateTime confirmRequestedAt) {
+        this.confirmRequestedAt = confirmRequestedAt;
+    }
+
+    public String getNudgedBySession() {
+        return nudgedBySession;
+    }
+
+    public void setNudgedBySession(String nudgedBySession) {
+        this.nudgedBySession = nudgedBySession;
+    }
+
+    public String getOnesignalSubscriptionId() {
+        return onesignalSubscriptionId;
+    }
+
+    public void setOnesignalSubscriptionId(String onesignalSubscriptionId) {
+        this.onesignalSubscriptionId = onesignalSubscriptionId;
     }
 
     @Override

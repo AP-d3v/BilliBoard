@@ -9,6 +9,9 @@ import BarOwnerDashboard from './pages/BarOwnerDashboard'
 import BarTables from './pages/BarTables'
 import TableQrCode from './pages/TableQrCode'
 import Scan from './pages/Scan'
+import Checkin from './pages/Checkin'
+import StillHere from './pages/StillHere'
+import Done from './pages/Done'
 
 export default function AppRouter() {
  
@@ -110,6 +113,18 @@ export default function AppRouter() {
         {
           path: 'scan/:tableId',
           element: <Scan />,
+        },
+        {
+          path: 'checkin/:tableId',
+          element: <Checkin />,
+        },
+        {
+          path: 'still-here/:tableId',
+          element: <StillHere />,
+        },
+        {
+          path: 'done/:tableId',
+          element: <Done />,
         },
         { path: '*', element: <NotFound /> },
       ],
