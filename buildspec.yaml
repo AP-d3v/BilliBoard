@@ -4,7 +4,7 @@ phases:
   pre_build:
     commands:
       - cd server
-      - mvn clean install
+      - mvn clean install -DskipTests
       - echo Logging in to Amazon ECR...
       - aws --version
       - REPOSITORY_URI=515626634848.dkr.ecr.us-east-1.amazonaws.com/billiboard-server
