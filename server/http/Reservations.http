@@ -1,0 +1,80 @@
+### Patron endpoints
+
+### The line for table 1 (current player + waiting list)
+GET http://localhost:8080/tables/1/reservations
+
+### My role for table 1 (CURRENT / CHECK_IN / NEXT / WAITING / NONE)
+POST http://localhost:8080/tables/1/reservations/role
+Content-Type: application/json
+
+{
+  "sessionId": "seed-session-ada"
+}
+
+### Join the line for table 1
+POST http://localhost:8080/tables/1/reservations
+Content-Type: application/json
+
+{
+  "playerName": "Sam",
+  "patronEmail": "sam@example.com"
+}
+
+### Join again with the same session = 400 "already in line"
+POST http://localhost:8080/tables/1/reservations
+Content-Type: application/json
+
+{
+  "playerName": "Sam",
+  "patronEmail": "sam@example.com",
+  "sessionId": "seed-session-ada"
+}
+
+### Join a table that doesn't exist = 404
+POST http://localhost:8080/tables/999/reservations
+Content-Type: application/json
+
+{
+  "playerName": "Sam",
+  "patronEmail": "sam@example.com"
+}
+
+### Leave the line for table 1
+DELETE http://localhost:8080/tables/1/reservations
+Content-Type: application/json
+
+{
+  "sessionId": "seed-session-grace"
+}
+
+### Nudge the current player for table 1 (must be in line; pushes them a notification)
+POST http://localhost:8080/tables/1/reservations/nudge
+Content-Type: application/json
+
+{
+  "sessionId": "seed-session-grace"
+}
+
+### Check in and claim the table (must have an open 2-minute window)
+POST http://localhost:8080/tables/1/reservations/check-in
+Content-Type: application/json
+
+{
+  "sessionId": "seed-session-grace"
+}
+
+### Current player confirms they are still here
+POST http://localhost:8080/tables/1/reservations/still-here
+Content-Type: application/json
+
+{
+  "sessionId": "seed-session-ada"
+}
+
+### Current player gives up the table
+POST http://localhost:8080/tables/1/reservations/give-up
+Content-Type: application/json
+
+{
+  "sessionId": "seed-session-ada"
+}
